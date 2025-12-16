@@ -9,20 +9,14 @@ import { buildRequestContext } from './taskService.js';
 // 전역 폰트 설정 (모든 동적 생성 요소에 적용)
 const DEFAULT_FONT_FAMILY = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
 
-// 백엔드 URL을 함수로 가져오기 (지연 평가)
+// config.js import 제거 - 함수로 직접 정의
+// main.js가 window.BACKEND_URL을 주입하므로 함수 호출 시점에는 존재함
 function getBackendURL() {
-  // window.BACKEND_URL이 없으면 기본값 사용
-  const url = window.BACKEND_URL || 'https://virtualassistant.magui-dev.com';
-  console.log('🔍 [getBackendURL] 호출됨:', url);
-  console.log('🔍 [getBackendURL] window.BACKEND_URL:', window.BACKEND_URL);
-  return url;
+  return window.BACKEND_URL || 'https://virtualassistant.magui-dev.com';
 }
 
-// API Base URL도 함수로
 function getAPIBase() {
-  const base = `${getBackendURL()}/api/v1`;
-  console.log('🔍 [getAPIBase] 생성됨:', base);
-  return base;
+  return `${getBackendURL()}/api/v1`;
 }
 
 const MULTI_AGENT_SESSION_KEY = 'multi_agent_session_id';

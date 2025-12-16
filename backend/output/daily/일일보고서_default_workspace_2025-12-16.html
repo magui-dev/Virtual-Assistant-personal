@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>일일 업무 보고서</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Malgun Gothic', sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .container {
+            max-width: 210mm;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+        }
+
+        .report-title {
+            color: #4a90e2;
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #4a90e2;
+            padding-bottom: 10px;
+        }
+
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 25px;
+        }
+
+        .header-table td {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+        }
+
+        .header-table .label {
+            background-color: #e8f4ff;
+            font-weight: bold;
+            width: 100px;
+            text-align: center;
+        }
+
+        .header-table input {
+            width: 100%;
+            border: none;
+            padding: 5px;
+            font-size: 14px;
+        }
+
+        .section {
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            background-color: #e8f4ff;
+            padding: 12px 15px;
+            font-weight: bold;
+            margin-bottom: 0;
+            border: 1px solid #dbdbdb;
+            border-bottom: none;
+        }
+
+        .section-content {
+            border: 1px solid #ddd;
+            padding: 15px;
+            min-height: 80px;
+            background-color: white;
+        }
+
+        .work-table {
+            width: 100%;
+            border-collapse: collapse;
+            border: 1px solid #ddd;
+        }
+
+        .work-table th {
+            background-color: #e8f4ff;
+            padding: 12px;
+            border: 1px solid #ddd;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .work-table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+
+        .work-table .task-name-cell {
+            width: 25%;
+        }
+
+        .work-table .detail-cell {
+            width: 60%;
+        }
+
+        .work-table .note-cell {
+            width: 15%;
+            text-align: center;
+        }
+
+        .work-table input,
+        .work-table textarea {
+            width: 100%;
+            border: none;
+            padding: 5px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: none;
+        }
+
+        .work-table textarea {
+            min-height: 50px;
+            line-height: 1.6;
+        }
+
+        .work-table input:focus,
+        .work-table textarea:focus {
+            background-color: #f8f9fa;
+            outline: none;
+        }
+
+        .text-area {
+            width: 100%;
+            min-height: 100px;
+            padding: 15px;
+            border: none;
+            resize: vertical;
+            font-family: inherit;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .text-area:focus {
+            outline: none;
+            background-color: #f8f9fa;
+        }
+
+        .add-row-btn {
+            margin-top: 10px;
+            padding: 8px 16px;
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .add-row-btn:hover {
+            background-color: #357abd;
+        }
+
+        .export-buttons-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            display: none; /* Electron에서만 표시 */
+            gap: 10px;
+        }
+
+        .export-button {
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s;
+            font-family: 'Malgun Gothic', sans-serif;
+        }
+
+        .export-button:hover {
+            background-color: #357abd;
+        }
+
+        .export-button.csv {
+            background-color: #5cb85c;
+        }
+
+        .export-button.csv:hover {
+            background-color: #4cae4c;
+        }
+
+        .pdf-save-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: bold;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s;
+            font-family: 'Malgun Gothic', sans-serif;
+        }
+
+        .pdf-save-button:hover {
+            background-color: #357abd;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .container {
+                max-width: 100%;
+                padding: 20px;
+            }
+
+            .export-buttons-container,
+            .pdf-save-button,
+            .add-row-btn {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Electron 전용 내보내기 버튼 -->
+    <div class="export-buttons-container" id="electronExportButtons">
+        <button class="export-button" id="exportPdfBtn">📄 PDF 저장</button>
+        <button class="export-button csv" id="exportCsvBtn">📊 CSV 저장</button>
+    </div>
+    
+    <!-- 기존 웹 브라우저용 PDF 버튼 -->
+    <button class="pdf-save-button" id="downloadPdfBtn">PDF 저장하기</button>
+    
+    <div class="container" id="report-container">
+        <div class="report-title">일일 업무 보고서</div>
+
+        <table class="header-table">
+            <tr>
+                <td class="label">일자</td>
+                <td><input type="date" id="date" value="2025-12-16"></td>
+                <td class="label">요일</td>
+                <td><input type="text" id="dayOfWeek" readonly style="background-color: #f8f9fa;"></td>
+                <td class="label">작성자</td>
+                <td><input type="text" id="author" value="김진모" class="author-input"></td>
+            </tr>
+        </table>
+
+        <div class="section">
+            <div class="section-title">업무 내용</div>
+            <table class="work-table">
+                <thead>
+                    <tr>
+                        <th>업무명</th>
+                        <th>상세내용</th>
+                    </tr>
+                </thead>
+                <tbody id="work-tbody">
+                    <tr>
+                        <td class="task-name-cell">
+                            <input type="text" value="기타" class="task-category-input">
+                        </td>
+                        <td class="detail-cell">
+                            <textarea class="task-detail-input">업무와 관련된 내용을 입력해 주시면 그에 맞춰 보고서를 작성함.</textarea>
+                        </td>
+                        <td class="note-cell" style="display: none;">
+                            <input type="hidden" value="카테고리: 기타" class="task-note-input">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="task-name-cell">
+                            <input type="text" value="기타" class="task-category-input">
+                        </td>
+                        <td class="detail-cell">
+                            <textarea class="task-detail-input">업무 내용이 불명확하므로 구체적인 업무를 확인할 필요가 있음.</textarea>
+                        </td>
+                        <td class="note-cell" style="display: none;">
+                            <input type="hidden" value="카테고리: 기타" class="task-note-input">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="task-name-cell">
+                            <input type="text" value="기타" class="task-category-input">
+                        </td>
+                        <td class="detail-cell">
+                            <textarea class="task-detail-input">업무 내용이 불명확하므로, 일반적인 업무 내용을 작성함. &#34;기타 업무에 대한 검토 및 정리를 진행함.</textarea>
+                        </td>
+                        <td class="note-cell" style="display: none;">
+                            <input type="hidden" value="카테고리: 기타" class="task-note-input">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="task-name-cell">
+                            <input type="text" value="기타" class="task-category-input">
+                        </td>
+                        <td class="detail-cell">
+                            <textarea class="task-detail-input">업무 내용이 불명확하므로, 일반적인 업무로 작성함. &#34;업무 관련 사항을 점검하고 필요한 조치를 취함.</textarea>
+                        </td>
+                        <td class="note-cell" style="display: none;">
+                            <input type="hidden" value="카테고리: 기타" class="task-note-input">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="task-name-cell">
+                            <input type="text" value="기타" class="task-category-input">
+                        </td>
+                        <td class="detail-cell">
+                            <textarea class="task-detail-input">업무 내용이 불명확하므로, 구체적인 업무를 파악하기 어려움. 추가적인 정보 제공 필요함.</textarea>
+                        </td>
+                        <td class="note-cell" style="display: none;">
+                            <input type="hidden" value="카테고리: 기타" class="task-note-input">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="section">
+            <div class="section-title">특이사항</div>
+            <div class="section-content">
+                <textarea class="text-area notes-input"></textarea>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Electron 환경 감지
+        const isElectron = navigator.userAgent.toLowerCase().indexOf('electron') > -1;
+        console.log('🔍 환경 체크:', {
+            isElectron: isElectron,
+            userAgent: navigator.userAgent,
+            hasRequire: typeof require !== 'undefined'
+        });
+        
+        if (isElectron) {
+            // Electron 환경: Electron 전용 버튼 표시, 웹 브라우저 버튼 숨김
+            document.getElementById('electronExportButtons').style.display = 'flex';
+            document.getElementById('downloadPdfBtn').style.display = 'none';
+            
+            // ipcRenderer 로드
+            const { ipcRenderer } = require('electron');
+            
+            // PDF 내보내기 (Electron)
+            document.getElementById('exportPdfBtn').addEventListener('click', async () => {
+                const button = document.getElementById('exportPdfBtn');
+                const originalText = button.textContent;
+                
+                button.disabled = true;
+                button.textContent = '📄 생성 중...';
+                
+                try {
+                    const result = await ipcRenderer.invoke('export-pdf-from-static', {
+                        html: document.documentElement.outerHTML,
+                        title: document.title
+                    });
+                    
+                    if (result.success) {
+                        alert('PDF가 저장되었습니다!\n' + result.filePath);
+                    }
+                } catch (error) {
+                    console.error('PDF 내보내기 오류:', error);
+                    alert('PDF 내보내기 중 오류가 발생했습니다.\n' + error.message);
+                } finally {
+                    button.disabled = false;
+                    button.textContent = originalText;
+                }
+            });
+            
+            // CSV 내보내기 (Electron)
+            document.getElementById('exportCsvBtn').addEventListener('click', async () => {
+                const button = document.getElementById('exportCsvBtn');
+                const originalText = button.textContent;
+                
+                button.disabled = true;
+                button.textContent = '📊 생성 중...';
+                
+                try {
+                    // HTML에서 모든 테이블 데이터 추출
+                    const rows = [];
+                    
+                    // 헤더 테이블 추출
+                    const headerTable = document.querySelector('.header-table');
+                    if (headerTable) {
+                        const headerRows = headerTable.querySelectorAll('tr');
+                        headerRows.forEach(tr => {
+                            const cells = tr.querySelectorAll('td');
+                            const rowData = [];
+                            cells.forEach(td => {
+                                const input = td.querySelector('input');
+                                rowData.push(input ? input.value : td.textContent.trim());
+                            });
+                            if (rowData.length > 0) rows.push(rowData);
+                        });
+                        rows.push([]); // 빈 행으로 구분
+                    }
+                    
+                    // 업무 내용 테이블 추출
+                    rows.push(['업무 내용']);
+                    const workTable = document.querySelector('.work-table');
+                    if (workTable) {
+                        // 헤더 행
+                        const headerRow = workTable.querySelector('thead tr');
+                        if (headerRow) {
+                            const headerCells = headerRow.querySelectorAll('th');
+                            const headerData = [];
+                            headerCells.forEach(th => headerData.push(th.textContent.trim()));
+                            rows.push(headerData);
+                        }
+                        
+                        // 데이터 행
+                        const dataRows = workTable.querySelectorAll('tbody tr');
+                        dataRows.forEach(tr => {
+                            const cells = tr.querySelectorAll('td');
+                            const rowData = [];
+                            cells.forEach(td => {
+                                const input = td.querySelector('input');
+                                const textarea = td.querySelector('textarea');
+                                if (textarea) {
+                                    rowData.push(textarea.value);
+                                } else if (input) {
+                                    rowData.push(input.value);
+                                } else {
+                                    rowData.push(td.textContent.trim());
+                                }
+                            });
+                            if (rowData.length > 0 && rowData.some(cell => cell)) {
+                                rows.push(rowData);
+                            }
+                        });
+                        rows.push([]); // 빈 행으로 구분
+                    }
+                    
+                    // 특이사항
+                    const notesTextarea = document.querySelector('.notes-input');
+                    if (notesTextarea && notesTextarea.value.trim()) {
+                        rows.push(['특이사항']);
+                        rows.push([notesTextarea.value.trim()]);
+                    }
+                    
+                    const result = await ipcRenderer.invoke('export-csv-from-static', {
+                        rows: rows,
+                        title: document.title
+                    });
+                    
+                    if (result.success) {
+                        alert('CSV가 저장되었습니다!\n' + result.filePath);
+                    }
+                } catch (error) {
+                    console.error('CSV 내보내기 오류:', error);
+                    alert('CSV 내보내기 중 오류가 발생했습니다.\n' + error.message);
+                } finally {
+                    button.disabled = false;
+                    button.textContent = originalText;
+                }
+            });
+        } else {
+            // 웹 브라우저 환경: 웹 브라우저 버튼만 표시
+            document.getElementById('electronExportButtons').style.display = 'none';
+            document.getElementById('downloadPdfBtn').style.display = 'block';
+        }
+        
+        // 날짜 변경 시 요일 자동 계산
+        document.getElementById('date').addEventListener('change', function() {
+            const date = new Date(this.value);
+            const days = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+            document.getElementById('dayOfWeek').value = days[date.getDay()];
+        });
+
+        // 초기 요일 설정
+        const dateInput = document.getElementById('date');
+        if (dateInput.value) {
+            dateInput.dispatchEvent(new Event('change'));
+        }
+
+        // PDF 다운로드 (웹 브라우저용)
+        document.getElementById('downloadPdfBtn').addEventListener('click', async () => {
+            const button = document.getElementById('downloadPdfBtn');
+            const originalText = button.textContent;
+            
+            button.disabled = true;
+            button.textContent = 'PDF 생성 중...';
+            
+            try {
+                const reportId = "9b224676-7a2c-459b-8499-d97287db2676" || null;
+                const dateInput = document.getElementById('date');
+                const reportDate = dateInput ? dateInput.value : null;
+                
+                // report_id가 없거나 유효하지 않으면 날짜 사용
+                let url = 'http://localhost:8000/api/v1/reports/daily/pdf?';
+                if (reportId && reportId !== 'null' && reportId !== '' && reportId.trim() !== '') {
+                    url += `report_id=${encodeURIComponent(reportId)}`;
+                } else if (reportDate) {
+                    url += `report_date=${encodeURIComponent(reportDate)}`;
+                } else {
+                    throw new Error('보고서 ID 또는 날짜가 필요합니다.');
+                }
+                
+                console.log('[PDF] 요청 URL:', url);
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error(`PDF 생성 실패: ${response.status} ${response.statusText}`);
+                }
+                
+                const blob = await response.blob();
+                const url_obj = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url_obj;
+                a.download = `일일업무보고서_${reportDate || 'unknown'}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url_obj);
+                
+                button.disabled = false;
+                button.textContent = originalText;
+            } catch (error) {
+                console.error('PDF 다운로드 실패:', error);
+                alert('PDF 다운로드 중 오류가 발생했습니다: ' + error.message);
+                button.disabled = false;
+                button.textContent = originalText;
+            }
+        });
+    </script>
+</body>
+</html>

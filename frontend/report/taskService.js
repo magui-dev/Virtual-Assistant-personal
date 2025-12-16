@@ -1,6 +1,9 @@
-import { API_BASE_URL } from '../config.js';
-
-const API_BASE = API_BASE_URL;
+// config.js import 제거 - 함수로 직접 정의
+// main.js가 window.BACKEND_URL을 주입하므로 함수 호출 시점에는 존재함
+function getAPIBase() {
+  const url = window.BACKEND_URL || 'https://virtualassistant.magui-dev.com';
+  return `${url}/api/v1`;
+}
 
 export async function buildRequestContext() {
   const headers = { 'Content-Type': 'application/json' };
@@ -68,7 +71,7 @@ export async function getTodayPlan() {
       requestBody.owner_id = owner_id;
     }
 
-    const response = await fetch(`${API_BASE}/plan/today`, {
+    const response = await fetch(`${getAPIBase()}/plan/today`, {
       method: 'POST',
       headers,
       body: JSON.stringify(requestBody)
@@ -112,7 +115,7 @@ async function generateWeeklyReport() {
       body.owner_id = owner_id;
     }
 
-    const response = await fetch(`${API_BASE}/weekly/generate`, {
+    const response = await fetch(`${getAPIBase()}/weekly/generate`, {
       method: 'POST',
       headers,
       body: JSON.stringify(body)
@@ -152,7 +155,7 @@ async function generateMonthlyReport() {
       body.owner_id = owner_id;
     }
 
-    const response = await fetch(`${API_BASE}/monthly/generate`, {
+    const response = await fetch(`${getAPIBase()}/monthly/generate`, {
       method: 'POST',
       headers,
       body: JSON.stringify(body)
@@ -190,7 +193,7 @@ async function generateYearlyReport() {
       body.owner_id = owner_id;
     }
 
-    const response = await fetch(`${API_BASE}/performance_report/generate`, {
+    const response = await fetch(`${getAPIBase()}/performance_report/generate`, {
       method: 'POST',
       headers,
       body: JSON.stringify(body)
@@ -224,7 +227,7 @@ export async function getMainTasks(ownerId, targetDate) {
     console.log('📌 [API] /daily/get_main_tasks 호출 시작...', { ownerId, targetDate });
 
     const { headers, owner_id } = await buildRequestContext();
-    const response = await fetch(`${API_BASE}/daily/get_main_tasks`, {
+    const response = await fetch(`${getAPIBase()}/daily/get_main_tasks`, {
       method: 'POST',
       headers,
       body: JSON.stringify({
@@ -261,7 +264,7 @@ export async function saveSelectedTasks(ownerId, targetDate, tasks, append = fal
     console.log('📌 [API] /daily/select_main_tasks 호출 시작...', { append, tasksCount: tasks.length });
 
     const { headers, owner_id } = await buildRequestContext();
-    const response = await fetch(`${API_BASE}/daily/select_main_tasks`, {
+    const response = await fetch(`${getAPIBase()}/daily/select_main_tasks`, {
       method: 'POST',
       headers,
       body: JSON.stringify({
@@ -298,7 +301,7 @@ export async function updateMainTasks(ownerId, targetDate, tasks) {
     console.log('📌 [API] /daily/update_main_tasks 호출 시작...');
 
     const { headers, owner_id } = await buildRequestContext();
-    const response = await fetch(`${API_BASE}/daily/update_main_tasks`, {
+    const response = await fetch(`${getAPIBase()}/daily/update_main_tasks`, {
       method: 'PUT',
       headers,
       body: JSON.stringify({
