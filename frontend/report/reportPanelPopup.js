@@ -12,12 +12,17 @@ const DEFAULT_FONT_FAMILY = '-apple-system, BlinkMacSystemFont, "Segoe UI", Robo
 // 백엔드 URL을 함수로 가져오기 (지연 평가)
 function getBackendURL() {
   // window.BACKEND_URL이 없으면 기본값 사용
-  return window.BACKEND_URL || 'https://virtualassistant.magui-dev.com';
+  const url = window.BACKEND_URL || 'https://virtualassistant.magui-dev.com';
+  console.log('🔍 [getBackendURL] 호출됨:', url);
+  console.log('🔍 [getBackendURL] window.BACKEND_URL:', window.BACKEND_URL);
+  return url;
 }
 
 // API Base URL도 함수로
 function getAPIBase() {
-  return `${getBackendURL()}/api/v1`;
+  const base = `${getBackendURL()}/api/v1`;
+  console.log('🔍 [getAPIBase] 생성됨:', base);
+  return base;
 }
 
 const MULTI_AGENT_SESSION_KEY = 'multi_agent_session_id';
