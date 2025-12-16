@@ -259,13 +259,41 @@
     </div>
   </div>
 
+  <!-- 🔥 모듈 로드 전에 BACKEND_URL 먼저 설정 -->
+  <script>
+    // Electron 환경에서 개발/배포 모드 확인
+    try {
+      const isDev = process && process.env && process.env.NODE_ENV === 'development';
+      window.BACKEND_URL = isDev 
+        ? 'http://localhost:8000'
+        : 'https://virtualassistant.magui-dev.com';
+      
+      console.log('✅ [HTML] BACKEND_URL 설정:', window.BACKEND_URL);
+    } catch (e) {
+      // 브라우저 환경 (process 없음)
+      window.BACKEND_URL = 'https://virtualassistant.magui-dev.com';
+      console.log('✅ [HTML] BACKEND_URL 설정 (브라우저):', window.BACKEND_URL);
+    }
+  </script>
+
   <!-- 보고서 서비스 스크립트 -->
   <script type="module">
+    // BACKEND_URL 확인 (디버깅)
+    console.log('🔍 [Report] window.BACKEND_URL:', window.BACKEND_URL);
+    
+    // BACKEND_URL이 없으면 대기
+    if (!window.BACKEND_URL) {
+      console.warn('⚠️ [Report] window.BACKEND_URL이 아직 설정되지 않았습니다. 1초 대기...');
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      console.log('🔍 [Report] 재확인 - window.BACKEND_URL:', window.BACKEND_URL);
+    }
+    
     import { initReportPanel, getReportSessionData } from './frontend/report/reportPanelPopup.js';
     
     // 페이지 로드 시 자동 초기화
     window.addEventListener('DOMContentLoaded', () => {
       console.log('📝 보고서 팝업 초기화');
+      console.log('✅ [Report] 최종 window.BACKEND_URL:', window.BACKEND_URL);
       initReportPanel();
     });
     
