@@ -299,7 +299,7 @@ function formatStructuredMessage(data) {
   if (reportUrl) {
     html += `<div class="report-link" style="font-family: ${DEFAULT_FONT_FAMILY}">`;
     // Electron 환경에서 링크 열기
-    const fullUrl = reportUrl.startsWith('http') ? reportUrl : `${BACKEND_URL}${reportUrl}`;
+    const fullUrl = reportUrl.startsWith('http') ? reportUrl : `${getBackendURL()}${reportUrl}`;
     html += `<a href="#" onclick="openReportLink('${fullUrl}'); return false;" class="report-btn" style="font-family: ${DEFAULT_FONT_FAMILY}">`;
     html += `📄 ${fileName}`;
     html += `</a>`;
@@ -2335,7 +2335,7 @@ async function handleNotesInput(inputText, reportId) {
 function showReportViewButton(reportDate) {
   if (!reportDate) return;
   
-  const reportUrl = `${BACKEND_URL}/static/reports/daily/일일보고서_default_workspace_${reportDate}.html`;
+  const reportUrl = `${getBackendURL()}/static/reports/daily/일일보고서_default_workspace_${reportDate}.html`;
   
   // 새로운 메시지로 버튼 표시
   const buttonMessage = document.createElement('div');

@@ -7,7 +7,8 @@ require('dotenv').config();
 
 //환경변수에서 백엔드 URL 가져오기
 // 개발: localhost, 배포: 서버 URL
-const isDev = process.env.NODE_ENV === 'development';
+// 🔥 app.isPackaged를 사용하여 확실하게 구분
+const isDev = !app.isPackaged;  // 패키징되지 않으면 개발 모드
 const BACKEND_URL = isDev 
   ? 'http://localhost:8000'  // 로컬 개발용
   : 'https://virtualassistant.magui-dev.com';  // 배포용 (사용자)
