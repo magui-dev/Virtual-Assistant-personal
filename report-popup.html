@@ -261,18 +261,14 @@
 
   <!-- 🔥 모듈 로드 전에 BACKEND_URL 먼저 설정 -->
   <script>
-    // Electron 환경에서 개발/배포 모드 확인
-    try {
-      const isDev = process && process.env && process.env.NODE_ENV === 'development';
-      window.BACKEND_URL = isDev 
-        ? 'http://localhost:8000'
-        : 'https://virtualassistant.magui-dev.com';
-      
-      console.log('✅ [HTML] BACKEND_URL 설정:', window.BACKEND_URL);
-    } catch (e) {
-      // 브라우저 환경 (process 없음)
+    // Electron 환경에서 window.BACKEND_URL이 이미 설정되어 있는지 확인
+    // main.js에서 주입한 값이 있으면 그것 사용, 없으면 기본값
+    if (!window.BACKEND_URL) {
+      // 기본값: 배포 환경
       window.BACKEND_URL = 'https://virtualassistant.magui-dev.com';
-      console.log('✅ [HTML] BACKEND_URL 설정 (브라우저):', window.BACKEND_URL);
+      console.log('✅ [HTML] BACKEND_URL 기본값 설정:', window.BACKEND_URL);
+    } else {
+      console.log('✅ [HTML] BACKEND_URL 이미 설정됨:', window.BACKEND_URL);
     }
   </script>
 
