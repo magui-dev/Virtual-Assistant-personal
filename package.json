@@ -10,9 +10,9 @@
     "start:dev": "cross-env NODE_ENV=development concurrently \"npm run start:backend\" \"npm run start:electron\"",
     "start:electron": "cross-env NODE_ENV=development electron .",
     "postinstall": "echo Done",
-    "build:mac": "electron-builder --mac",
-    "build:win": "electron-builder --win",
-    "build": "electron-builder --mac --win"
+    "build:mac": "cross-env NODE_ENV=production electron-builder --mac",
+    "build:win": "cross-env NODE_ENV=production electron-builder --win",
+    "build": "cross-env NODE_ENV=production electron-builder --mac --win"
   },
   "build": {
     "appId": "com.magui.virtualassistant",
