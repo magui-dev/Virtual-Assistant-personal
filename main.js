@@ -7,10 +7,13 @@ require('dotenv').config();
 
 //환경변수에서 백엔드 URL 가져오기
 // 개발: localhost, 배포: 서버 URL
-const isDev = process.env.NODE_ENV === 'development';
-const BACKEND_URL = isDev 
-  ? 'http://localhost:8000'  // 로컬 개발용
-  : 'https://virtualassistant.magui-dev.com';  // 배포용 (사용자)
+// 환경변수로 직접 지정하거나, 기본값 사용
+const BACKEND_URL = process.env.BACKEND_URL || 
+  (process.env.NODE_ENV === 'production' 
+    ? 'https://virtualassistant.magui-dev.com'  // 배포용
+    : 'http://localhost:8000');  // 로컬 개발용
+    
+const isDev = BACKEND_URL.includes('localhost');
 console.log('백엔드 URL:', BACKEND_URL, isDev ? '(개발 모드)' : '(배포 모드)');
 
 // 내보내기 핸들러 등록 (PDF, CSV)
