@@ -9,10 +9,17 @@ import { buildRequestContext } from './taskService.js';
 // 전역 폰트 설정 (모든 동적 생성 요소에 적용)
 const DEFAULT_FONT_FAMILY = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif';
 
-// 백엔드 URL 가져오기 (Electron main.js에서 주입)
-const BACKEND_URL = window.BACKEND_URL || 'http://localhost:8000';
-const API_BASE = `${BACKEND_URL}/api/v1`;
-const API_BASE_URL = `${BACKEND_URL}/api/v1`;
+// 백엔드 URL을 함수로 가져오기 (지연 평가)
+function getBackendURL() {
+  // window.BACKEND_URL이 없으면 기본값 사용
+  return window.BACKEND_URL || 'https://virtualassistant.magui-dev.com';
+}
+
+// API Base URL도 함수로
+function getAPIBase() {
+  return `${getBackendURL()}/api/v1`;
+}
+
 const MULTI_AGENT_SESSION_KEY = 'multi_agent_session_id';
 
 let messages = [];
@@ -689,12 +696,12 @@ async function loadNewTaskRecommendations(ownerId, targetDate, headers) {
     }
     
     console.log(`[${requestId}] 📤 API 요청:`, {
-      url: `${API_BASE}/plan/today`,
+      url: `${getAPIBase()}/plan/today`,
       method: 'POST',
       body: requestBody
     });
     
-    const response = await fetch(`${API_BASE}/plan/today`, {
+    const response = await fetch(`${getAPIBase()}/plan/today`, {
       method: 'POST',
       headers: headers,
       body: JSON.stringify(requestBody)
@@ -810,13 +817,13 @@ async function sendMultiAgentMessage(userMessage) {
     }
     
     console.log(`[${requestId}] 📤 API 요청:`, {
-      url: `${API_BASE_URL}/agent/report`,
+      url: `${getAPIBase()}/agent/report`,
       method: 'POST',
       headers: { ...headers, Authorization: headers.Authorization ? 'Bearer ***' : '없음' },
       body: requestBody
     });
     
-    const response = await fetch(`${API_BASE_URL}/agent/report`, {
+    const response = await fetch(`${getAPIBase()}/agent/report`, {
       method: 'POST',
       headers: headers,
       credentials: 'include',
@@ -871,7 +878,7 @@ async function getOrCreateMultiAgentSession() {
   }
   
   try {
-    const response = await fetch(`${API_BASE_URL}/multi-agent/session`, {
+    const response = await fetch(`${getAPIBase()}/multi-agent/session`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -914,12 +921,12 @@ async function getTodayPlan() {
     }
     
     console.log(`[${requestId}] 📤 API 요청:`, {
-      url: `${API_BASE}/plan/today`,
+      url: `${getAPIBase()}/plan/today`,
       method: 'POST',
       body: requestBody
     });
     
-    const response = await fetch(`${API_BASE}/plan/today`, {
+    const response = await fetch(`${getAPIBase()}/plan/today`, {
       method: 'POST',
       headers: headers,
       body: JSON.stringify(requestBody)
@@ -1112,12 +1119,12 @@ async function handleSaveTasks() {
     };
     
     console.log(`[${requestId}] 📤 API 요청:`, {
-      url: `${API_BASE}/daily/select_main_tasks`,
+      url: `${getAPIBase()}/daily/select_main_tasks`,
       method: 'POST',
       body: requestBody
     });
     
-    const response = await fetch(`${API_BASE}/daily/select_main_tasks`, {
+    const response = await fetch(`${getAPIBase()}/daily/select_main_tasks`, {
       method: 'POST',
       headers,
       body: JSON.stringify(requestBody)
@@ -1174,12 +1181,12 @@ async function startDailyReport() {
       requestBody.owner_id = owner_id;
     }
     console.log(`[${requestId}] 📤 API 요청:`, {
-      url: `${API_BASE}/daily/start`,
+      url: `${getAPIBase()}/daily/start`,
       method: 'POST',
       body: requestBody
     });
     
-    const response = await fetch(`${API_BASE}/daily/start`, {
+    const response = await fetch(`${getAPIBase()}/daily/start`, {
       method: 'POST',
       headers,
       body: JSON.stringify(requestBody)
@@ -1244,12 +1251,12 @@ async function handleDailyAnswer(answer) {
   try {
     const requestBody = { session_id: dailySessionId, answer };
     console.log(`[${requestId}] 📤 API 요청:`, {
-      url: `${API_BASE}/daily/answer`,
+      url: `${getAPIBase()}/daily/answer`,
       method: 'POST',
       body: { ...requestBody, answer: answer.substring(0, 50) + '...' }
     });
     
-    const response = await fetch(`${API_BASE}/daily/answer`, {
+    const response = await fetch(`${getAPIBase()}/daily/answer`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(requestBody)
@@ -1323,12 +1330,12 @@ async function generateWeeklyReport() {
       requestBody.owner_id = owner_id;
     }
     console.log(`[${requestId}] 📤 API 요청:`, {
-      url: `${API_BASE}/weekly/generate`,
+      url: `${getAPIBase()}/weekly/generate`,
       method: 'POST',
       body: requestBody
     });
     
-    const response = await fetch(`${API_BASE}/weekly/generate`, {
+    const response = await fetch(`${getAPIBase()}/weekly/generate`, {
       method: 'POST',
       headers,
       body: JSON.stringify(requestBody)
@@ -1404,12 +1411,12 @@ async function generateMonthlyReport() {
       requestBody.owner_id = owner_id;
     }
     console.log(`[${requestId}] 📤 API 요청:`, {
-      url: `${API_BASE}/monthly/generate`,
+      url: `${getAPIBase()}/monthly/generate`,
       method: 'POST',
       body: requestBody
     });
     
-    const response = await fetch(`${API_BASE}/monthly/generate`, {
+    const response = await fetch(`${getAPIBase()}/monthly/generate`, {
       method: 'POST',
       headers,
       body: JSON.stringify(requestBody)
@@ -1482,13 +1489,13 @@ async function handleRAGChat(query) {
       requestBody.owner_id = owner_id;
     }
     console.log(`[${requestId}] 📤 API 요청:`, {
-      url: `${API_BASE}/report-chat/chat`,
+      url: `${getAPIBase()}/report-chat/chat`,
       method: 'POST',
       headers: { ...headers, Authorization: headers.Authorization ? 'Bearer ***' : '없음' },
       body: requestBody
     });
     
-    const response = await fetch(`${API_BASE}/report-chat/chat`, {
+    const response = await fetch(`${getAPIBase()}/report-chat/chat`, {
       method: 'POST',
       headers: headers,
       credentials: 'include', // 쿠키도 함께 전송
@@ -2155,7 +2162,7 @@ async function handleDailyInputComplete() {
     
     console.log('[DailyInput] 저장 요청:', requestBody);
     
-    const response = await fetch(`${API_BASE}/reports/daily/input`, {
+    const response = await fetch(`${getAPIBase()}/reports/daily/input`, {
       method: 'POST',
       headers: headers,
       body: JSON.stringify(requestBody)
@@ -2262,7 +2269,7 @@ async function handleNotesInput(inputText, reportId) {
     
     // 보고서 업데이트 API 호출
     const { headers } = await buildRequestContext();
-    const apiUrl = `${API_BASE}/reports/daily/${reportId}/notes`;
+    const apiUrl = `${getAPIBase()}/reports/daily/${reportId}/notes`;
     console.log('[Notes] 저장 요청:', { reportId, url: apiUrl, notes: inputText });
     
     const updateResponse = await fetch(apiUrl, {
