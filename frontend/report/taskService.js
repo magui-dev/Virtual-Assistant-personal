@@ -1,14 +1,7 @@
 // config.js import 제거 - 함수로 직접 정의
 // main.js가 window.BACKEND_URL을 주입하므로 함수 호출 시점에는 존재함
 function getAPIBase() {
-  let url = window.BACKEND_URL || 'https://virtualassistant.magui-dev.com';
-
-  // 🔥 Electron 앱이 잘못된 localhost를 주입하는 경우를 방지
-  if (url.includes('localhost')) {
-    console.warn('⚠️ localhost 감지됨! 운영 서버로 강제 전환합니다.');
-    url = 'https://virtualassistant.magui-dev.com';
-  }
-
+  const url = window.BACKEND_URL || 'https://virtualassistant.magui-dev.com';
   return `${url}/api/v1`;
 }
 

@@ -15,13 +15,6 @@ const DEFAULT_FONT_FAMILY = '-apple-system, BlinkMacSystemFont, "Segoe UI", Robo
 function getBackendURL() {
   console.log('🔍 [Debug] getBackendURL 호출됨. window.BACKEND_URL:', window.BACKEND_URL);
 
-  // 🔥 Electron 앱이 잘못된 localhost를 주입하는 경우(exe 빌드 오류 등)를 방지하기 위해
-  // localhost가 포함되어 있으면 강제로 운영 서버로 연결
-  if (window.BACKEND_URL && window.BACKEND_URL.includes('localhost')) {
-    console.warn('⚠️ [Debug] localhost 감지됨! 운영 서버로 강제 전환합니다.');
-    return 'https://virtualassistant.magui-dev.com';
-  }
-
   const finalUrl = window.BACKEND_URL || 'https://virtualassistant.magui-dev.com';
   console.log('✅ [Debug] 최종 결정된 BACKEND_URL:', finalUrl);
   return finalUrl;
