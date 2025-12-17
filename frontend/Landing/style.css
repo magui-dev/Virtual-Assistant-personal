@@ -135,6 +135,16 @@ body {
     margin-bottom: 25px;
 }
 
+/* 웹 환경 경고 */
+.web-warning {
+    font-size: 0.7rem;
+    color: #e74c3c;
+    text-align: center;
+    margin: -5px 0 5px 0;
+    line-height: 1.5;
+    font-weight: 500;
+}
+
 /* 공통 버튼 스타일 */
 button {
     width: 100%;
