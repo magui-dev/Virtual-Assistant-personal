@@ -325,3 +325,98 @@
 .message.rag .bubble a:hover {
   text-decoration: underline;
 }
+
+/* ========================================
+ * 사용 가이드 (접기/펼치기)
+ * ======================================== */
+.usage-guide {
+  background: linear-gradient(to bottom, rgba(156, 175, 136, 0.08), rgba(156, 175, 136, 0.12));
+  border-top: 1px solid rgba(156, 175, 136, 0.2);
+  border-bottom: 1px solid rgba(156, 175, 136, 0.2);
+  padding: 0;
+  font-size: 0.65rem;
+  color: #586069;
+  margin-bottom: 15px;
+  border-radius: 8px;
+}
+
+.guide-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.2s;
+}
+
+.guide-header:hover {
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.guide-title {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #333;
+}
+
+.toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.6rem;
+  color: #999;
+}
+
+.toggle-text {
+  font-size: 0.6rem;
+  font-weight: 500;
+}
+
+.toggle-icon {
+  font-size: 0.6rem;
+  transition: transform 0.3s ease;
+}
+
+.toggle-icon.collapsed {
+  transform: rotate(-90deg);
+}
+
+.guide-content {
+  padding: 0 12px 8px 12px;
+  max-height: 500px;
+  overflow: hidden;
+  transition: max-height 0.3s ease, padding 0.3s ease, opacity 0.3s ease;
+  opacity: 1;
+}
+
+.guide-content.collapsed {
+  max-height: 0;
+  padding: 0 12px;
+  opacity: 0;
+}
+
+.guide-item {
+  margin: 3px 0;
+  line-height: 1.4;
+  padding: 1px 0;
+}
+
+.guide-label {
+  font-weight: 600;
+  color: #555;
+  margin-right: 3px;
+  font-size: 0.65rem;
+}
+
+.guide-example {
+  color: #888;
+  font-style: italic;
+  cursor: pointer;
+  transition: color 0.2s;
+  font-size: 0.65rem;
+}
+
+.guide-example:hover {
+  color: #667eea;
+}

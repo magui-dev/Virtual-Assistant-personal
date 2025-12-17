@@ -87,8 +87,9 @@ body {
 }
 
 .icon {
-    width: 24px;
-    height: 24px;
+    width: 20px;  /* 구글 18dp 기준에 맞춤 */
+    height: 20px;
+    flex-shrink: 0;  /* 아이콘 크기 고정 */
 }
 
 .google-btn {
