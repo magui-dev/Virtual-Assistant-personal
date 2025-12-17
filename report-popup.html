@@ -1,12 +1,13 @@
 <!doctype html>
 <html lang="ko">
+
 <head>
   <meta charset="utf-8" />
   <title>보고서 & 업무 관리</title>
-  
+
   <!-- CSS -->
   <link rel="stylesheet" href="frontend/styles/report.css" />
-  
+
   <style>
     * {
       box-sizing: border-box;
@@ -14,8 +15,9 @@
       padding: 0;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
     }
-    
-    html, body {
+
+    html,
+    body {
       margin: 0 !important;
       padding: 0 !important;
       height: 100% !important;
@@ -25,13 +27,13 @@
       border-radius: 0 !important;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
     }
-    
+
     body {
       overflow: hidden;
       background: white !important;
       border-radius: 0 !important;
     }
-    
+
     /* 드래그 가능한 상단 바 */
     .titlebar {
       -webkit-app-region: drag;
@@ -48,23 +50,23 @@
       border-radius: 0 !important;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
     }
-    
+
     .titlebar * {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif !important;
     }
-    
+
     .titlebar-title {
       display: flex;
       align-items: center;
       gap: 6px;
     }
-    
+
     .titlebar-buttons {
       -webkit-app-region: no-drag;
       display: flex;
       gap: 8px;
     }
-    
+
     .titlebar-btn {
       width: 12px;
       height: 12px;
@@ -73,23 +75,23 @@
       cursor: pointer;
       transition: opacity 0.2s;
     }
-    
+
     .titlebar-btn:hover {
       opacity: 0.8;
     }
-    
+
     .btn-close {
       background: #ff5f57;
     }
-    
+
     .btn-minimize {
       background: #ffbd2e;
     }
-    
+
     .btn-maximize {
       background: #28ca42;
     }
-    
+
     #report-panel {
       position: static !important;
       width: 100% !important;
@@ -107,17 +109,17 @@
       margin: 0 !important;
       padding: 0 !important;
     }
-    
+
     /* 헤더 숨기기 (타이틀바에 이미 있음) */
     #report-panel h2 {
       display: none !important;
     }
-    
+
     /* 날짜 설정 패널 */
     #date-settings-panel {
       flex-shrink: 0;
     }
-    
+
     /* 메시지 영역 */
     #report-messages {
       flex: 1 !important;
@@ -128,7 +130,7 @@
       margin-bottom: 0 !important;
       border-radius: 0 !important;
     }
-    
+
     /* 입력 영역 - 완전히 하단 고정 */
     #report-input-area {
       flex-shrink: 0 !important;
@@ -144,43 +146,43 @@
       border-top: 1px solid #e0e0e0 !important;
       box-shadow: none !important;
     }
-    
+
     /* 날짜 설정 패널 배경색 통일 */
     #date-settings-panel {
       background: rgba(253, 188, 102, 0.1) !important;
       border-bottom: 1px solid rgba(253, 188, 102, 0.3) !important;
     }
-    
+
     /* 적용 버튼 색상 변경 */
     #apply-date-btn {
       background: #fdbc66 !important;
       color: white !important;
     }
-    
+
     #apply-date-btn:hover {
       background: #f0a850 !important;
     }
-    
+
     /* 취소 버튼 색상 조정 */
     #close-date-btn {
       background: #d4a574 !important;
       color: white !important;
     }
-    
+
     #close-date-btn:hover {
       background: #c39463 !important;
     }
-    
+
     /* 전송 버튼 색상 통일 */
     #report-send-btn {
       background: #fdbc66 !important;
       color: white !important;
     }
-    
+
     #report-send-btn:hover {
       background: #f0a850 !important;
     }
-    
+
     /* 입력창 포커스 색상 */
     #report-input:focus,
     #daily-target-date:focus,
@@ -202,7 +204,8 @@
     </div>
     <div class="titlebar-buttons">
       <button class="titlebar-btn btn-close" onclick="window.close()"></button>
-      <button class="titlebar-btn btn-minimize" onclick="require('electron').remote.getCurrentWindow().minimize()"></button>
+      <button class="titlebar-btn btn-minimize"
+        onclick="require('electron').remote.getCurrentWindow().minimize()"></button>
       <button class="titlebar-btn btn-maximize" onclick="toggleMaximize()"></button>
     </div>
   </div>
@@ -211,50 +214,51 @@
   <!-- 보고서 & 업무 패널 (전체 화면) -->
   <div id="report-panel" style="pointer-events: auto !important;">
     <h2>📝 보고서 & 업무</h2>
-    
+
     <!-- 날짜 설정 패널 -->
     <div id="date-settings-panel" style="padding: 12px; display: none;">
       <div style="margin-bottom: 8px; font-size: 13px; font-weight: 600; color: #333;">📅 보고서 기간 설정</div>
-      
+
       <!-- 일일 보고서 날짜 -->
       <div id="daily-date-input" class="date-input-group" style="display: none;">
         <label style="font-size: 12px; color: #555;">일일 보고서 날짜:</label>
-        <input type="date" id="daily-target-date" style="width: 100%; padding: 6px; border-radius: 6px; border: 1px solid #ddd; margin-top: 4px;">
+        <input type="date" id="daily-target-date"
+          style="width: 100%; padding: 6px; border-radius: 6px; border: 1px solid #ddd; margin-top: 4px;">
       </div>
-      
+
       <!-- 주간 보고서 날짜 -->
       <div id="weekly-date-input" class="date-input-group" style="display: none;">
         <label style="font-size: 12px; color: #555;">주간 보고서 기준 날짜:</label>
-        <input type="date" id="weekly-target-date" style="width: 100%; padding: 6px; border-radius: 6px; border: 1px solid #ddd; margin-top: 4px;">
+        <input type="date" id="weekly-target-date"
+          style="width: 100%; padding: 6px; border-radius: 6px; border: 1px solid #ddd; margin-top: 4px;">
       </div>
-      
+
       <!-- 월간 보고서 년월 -->
       <div id="monthly-date-input" class="date-input-group" style="display: none;">
         <label style="font-size: 12px; color: #555;">월간 보고서 년월:</label>
         <div style="display: flex; gap: 8px; margin-top: 4px;">
-          <input type="number" id="monthly-year" placeholder="년도" min="2020" max="2099" style="flex: 1; padding: 6px; border-radius: 6px; border: 1px solid #ddd;">
-          <input type="number" id="monthly-month" placeholder="월" min="1" max="12" style="flex: 1; padding: 6px; border-radius: 6px; border: 1px solid #ddd;">
+          <input type="number" id="monthly-year" placeholder="년도" min="2020" max="2099"
+            style="flex: 1; padding: 6px; border-radius: 6px; border: 1px solid #ddd;">
+          <input type="number" id="monthly-month" placeholder="월" min="1" max="12"
+            style="flex: 1; padding: 6px; border-radius: 6px; border: 1px solid #ddd;">
         </div>
       </div>
-      
+
       <div style="display: flex; gap: 8px; margin-top: 12px;">
-        <button id="apply-date-btn" style="flex: 1; padding: 8px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">적용</button>
-        <button id="close-date-btn" style="flex: 1; padding: 8px; border: none; border-radius: 6px; cursor: pointer;">취소</button>
+        <button id="apply-date-btn"
+          style="flex: 1; padding: 8px; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">적용</button>
+        <button id="close-date-btn"
+          style="flex: 1; padding: 8px; border: none; border-radius: 6px; cursor: pointer;">취소</button>
       </div>
     </div>
-    
+
     <!-- 메시지 영역 -->
     <div id="report-messages"></div>
-    
+
     <!-- 입력 영역 -->
     <div id="report-input-area">
-      <input 
-        type="text" 
-        id="report-input" 
-        placeholder="메시지를 입력하세요..." 
-        autocomplete="off"
-        style="pointer-events: auto !important; cursor: text !important;"
-      />
+      <input type="text" id="report-input" placeholder="메시지를 입력하세요..." autocomplete="off"
+        style="pointer-events: auto !important; cursor: text !important;" />
       <button id="report-send-btn" style="pointer-events: auto !important; cursor: pointer !important;">전송</button>
     </div>
   </div>
@@ -276,37 +280,37 @@
   <script type="module">
     // BACKEND_URL 확인 (디버깅)
     console.log('🔍 [Report] window.BACKEND_URL:', window.BACKEND_URL);
-    
+
     // BACKEND_URL이 없으면 대기
     if (!window.BACKEND_URL) {
       console.warn('⚠️ [Report] window.BACKEND_URL이 아직 설정되지 않았습니다. 1초 대기...');
       await new Promise(resolve => setTimeout(resolve, 1000));
       console.log('🔍 [Report] 재확인 - window.BACKEND_URL:', window.BACKEND_URL);
     }
-    
-    import { initReportPanel, getReportSessionData } from './frontend/report/reportPanelPopup.js';
-    
+
+    import { initReportPanel, getReportSessionData } from './frontend/report/reportPanelPopup.js?v=2';
+
     // 페이지 로드 시 자동 초기화
     window.addEventListener('DOMContentLoaded', () => {
       console.log('📝 보고서 팝업 초기화');
       console.log('✅ [Report] 최종 window.BACKEND_URL:', window.BACKEND_URL);
       initReportPanel();
     });
-    
+
     // getReportSessionData를 전역으로 노출 (Electron에서 접근 가능하도록)
     window.getReportSessionData = getReportSessionData;
-    
+
     // 최대화 토글
     function toggleMaximize() {
       const { ipcRenderer } = require('electron');
       ipcRenderer.send('toggle-report-maximize');
     }
-    
+
     // 전역으로 노출
     window.toggleMaximize = toggleMaximize;
-    
+
     // 보고서 링크 열기 함수를 전역으로 노출 (Electron 앱 내부에서 열기)
-    window.openReportLink = function(url) {
+    window.openReportLink = function (url) {
       try {
         const { ipcRenderer } = require('electron');
         // URL에서 보고서 타입 추출 (daily/weekly/monthly)
@@ -318,7 +322,7 @@
         } else if (url.includes('/monthly/')) {
           title = '월간보고서';
         }
-        
+
         ipcRenderer.send('open-report-window', {
           url: url,
           title: title
@@ -331,4 +335,5 @@
     };
   </script>
 </body>
+
 </html>
